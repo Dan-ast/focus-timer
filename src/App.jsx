@@ -1,7 +1,9 @@
+import {useState} from 'react';
 import './App.css';
 import './index.css';
 
 function App() {
+  const [mode, setMode] = useState('pomodoro');
 
   return (
     <div className="app">
@@ -18,9 +20,18 @@ function App() {
         </header>
 
         <section className="mode-switch">
-          <button className="mode-btn mode-btn--active">Pomodoro</button>
-          <button className="mode-btn">Short break</button>
-          <button className="mode-btn">Stopwatch</button>
+          <button className={`mode-btn ${mode === 'pomodoro' ? 'mode-btn--active' : ''}`} 
+          onClick={() => setMode('pomodoro')}>
+            Pomodoro
+          </button>
+          <button className={`mode-btn ${mode === 'short-break' ? 'mode-btn--active' : ''}`} 
+          onClick={() => setMode('short-break')}>
+            Short break
+          </button>
+          <button className={`mode-btn ${mode === 'stopwatch' ? 'mode-btn--active' : ''}`} 
+          onClick={() => setMode('stopwatch')}>
+            Stopwatch
+          </button>
         </section>
 
         <section className="timer-display">
