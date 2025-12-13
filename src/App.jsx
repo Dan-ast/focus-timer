@@ -4,6 +4,8 @@ import './index.css';
 
 function App() {
   const [mode, setMode] = useState('pomodoro');
+  const [minutes, setMinutes] = useState(25);
+  const [seconds, setSeconds] = useState(0);
 
   return (
     <div className="app">
@@ -36,9 +38,13 @@ function App() {
 
         <section className="timer-display">
           <div className="timer-circle">
-            <span className="timer-minutes">25</span>
+            <span className="timer-minutes">
+              {String(minutes).padStart(2, '0')}
+            </span>
             <span className="timer-colon">:</span>
-            <span className="timer-seconds">00</span>
+            <span className="timer-seconds">
+              {String(seconds).padStart(2, '0')}
+            </span>
           </div>
         </section>
 
