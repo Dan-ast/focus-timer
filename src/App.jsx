@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import './App.css';
 import './index.css';
 
@@ -7,6 +7,7 @@ function App() {
   const [secondsLeft, setSecondsLeft] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
 
+  const intervalRef = useRef(null);
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
 
@@ -15,6 +16,25 @@ function App() {
     if (currentMode === "short-break") return 5 * 60;
     return 0;
   };
+
+  useEffect(() => {
+    if(!isRunning) return;
+
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
+    intervalRef.current = setInterval(() => {
+      setSecondsLeft((prev) => {
+        if (mode === "stopwatch") return prev + 1;
+
+        if (prev <= 0) return 0;
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isRunning, mode]);
 
   return (
     <div className="app">
