@@ -4,8 +4,17 @@ import './index.css';
 
 function App() {
   const [mode, setMode] = useState('pomodoro');
-  const [minutes, setMinutes] = useState(25);
-  const [seconds, setSeconds] = useState(0);
+  const [secondsLeft, setSecondsLeft] = useState(25 * 60);
+  const [isRunning, setIsRunning] = useState(false);
+
+  const minutes = Math.floor(secondsLeft / 60);
+  const seconds = secondsLeft % 60;
+
+  const getInitialSeconds = (currentMode) => {
+    if (currentMode === "pomodoro") return 25 * 60;
+    if (currentMode === "short-break") return 5 * 60;
+    return 0;
+  };
 
   return (
     <div className="app">
@@ -23,15 +32,29 @@ function App() {
 
         <section className="mode-switch">
           <button className={`mode-btn ${mode === 'pomodoro' ? 'mode-btn--active' : ''}`} 
-          onClick={() => setMode('pomodoro')}>
+          onClick={() => {
+            setMode('pomodoro');
+            setIsRunning(false);
+            setSecondsLeft(getInitialSeconds("pomodoro"));
+          }}>
             Pomodoro
           </button>
+
           <button className={`mode-btn ${mode === 'short-break' ? 'mode-btn--active' : ''}`} 
-          onClick={() => setMode('short-break')}>
+          onClick={() => {
+            setMode('short-break');
+            setIsRunning(false);
+            setSecondsLeft(getInitialSeconds("short-break"));
+            }}>
             Short break
           </button>
+
           <button className={`mode-btn ${mode === 'stopwatch' ? 'mode-btn--active' : ''}`} 
-          onClick={() => setMode('stopwatch')}>
+          onClick={() => {
+            setMode('stopwatch');
+            setIsRunning(false);
+            setSecondsLeft(getInitialSeconds("stopwatch"));
+            }}>
             Stopwatch
           </button>
         </section>
@@ -49,8 +72,15 @@ function App() {
         </section>
 
         <section className="timer-controls">
-          <button className="primary-btn">Start</button>
-          <button className="ghost-btn">Reset</button>
+          <button className="primary-btn" onClick={() => setIsRunning((prev) => !prev)}>
+            {isRunning ? "Pause" : "Start"}
+          </button>
+          <button className="ghost-btn" onClick={() => {
+            setIsRunning(false);
+            setSecondsLeft(mode === "pomodoro" ? 25 * 60 : mode === "short-break" ? 5 * 60 : 0);
+            }}>
+              Reset
+          </button>
         </section>
 
       </main>
