@@ -1,11 +1,14 @@
 import {useEffect, useRef, useState} from 'react';
 import './App.css';
 import './index.css';
+import { flushSync } from 'react-dom';
 
 function App() {
   const [mode, setMode] = useState('pomodoro');
   const [secondsLeft, setSecondsLeft] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
+  const [pomodoroCount, setPomodoroCount] = useState(0); //how many focus sessions completed
+  const [autoContinue, setAutoContinue] = useState(true); //i will make it a toggle
 
   const intervalRef = useRef(null);
   const minutes = Math.floor(secondsLeft / 60);
@@ -35,6 +38,55 @@ function App() {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [isRunning, mode]);
+
+  useEffect(() => {
+    //only for pomodoro + break, not stopwatch
+    if (mode === "stopwatch") return; 
+
+    if (secondsLeft === 0 && isRunning) {
+      setIsRunning(false);
+      playDing();
+
+      //update counter and next mode
+      if (mode === "pomodoro") {
+        setPomodoroCount((prev) => prev + 1);
+        if (autoContinue) {
+          setMode("short-break");
+          setSecondsLeft(getInitialSeconds("short-break"));
+          setIsRunning(true);
+        }
+      } else if (mode === "short-break") {
+        if (autoContinue) {
+          setMode("pomodoro");
+          setSecondsLeft(getInitialSeconds("pomodoro"));
+          setIsRunning(true);
+        }
+      }
+    }
+  }, [secondsLeft, isRunning, mode, autoContinue]);
+
+  const playDing = () => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext) ();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.value = 880;
+
+      gain.gain.value = 0.0001;
+      gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.26);
+    } catch (e) {
+
+    }
+  };
 
   return (
     <div className="app">
@@ -77,6 +129,9 @@ function App() {
             }}>
             Stopwatch
           </button>
+          <p className="timer-subtitle" style={{ marginTop: 10}}>
+            Completed focus sessions: {pomodoroCount}
+          </p>
         </section>
 
         <section className="timer-display">
