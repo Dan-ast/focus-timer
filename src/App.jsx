@@ -159,6 +159,11 @@ function App() {
         </section>
 
       </main>
+      <footer className="app-footer">
+        <p>
+          Built with focus &#10023; React &middot; Vite &middot; Intentional design
+          </p>
+      </footer>
     </div>
   );
 }

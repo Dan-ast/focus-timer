@@ -239,6 +239,23 @@ body {
   box-shadow: 0 0 12px rgba(199, 125, 255, 0.7);
 }
 
+.app-footer {
+  position: absolute;
+  bottom: 24px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: lowercase;
+  color: var(--text-muted);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.app-footer p {
+  margin: 0;
+}
+
 @media (max-width: 480px) {
   .timer-shell {
     padding: 24px 18px 22px;
